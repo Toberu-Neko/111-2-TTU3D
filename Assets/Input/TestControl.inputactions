@@ -6,9 +6,18 @@
             "id": "84258c07-f2ee-4f6f-bdd2-6876d1e0586a",
             "actions": [
                 {
-                    "name": "Phone",
-                    "type": "Button",
+                    "name": "Movement",
+                    "type": "Value",
                     "id": "754b9454-e9fa-4afa-abad-badc55928774",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "47b4a23c-317d-4b97-a0c1-dda02ea5e01f",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -17,13 +26,79 @@
             ],
             "bindings": [
                 {
+                    "name": "WASD",
+                    "id": "86c7bae2-77fd-4fa4-8d39-13d9ada0991f",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "793ccd4c-951e-47c5-a10b-25ef62ec791d",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "dde4e691-0d69-45f9-ba37-cdf2da617551",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "b6482801-c571-4900-a011-9fe79fc8fa40",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "bda6911b-1341-4720-8f77-469c860eafeb",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "",
-                    "id": "211f67eb-f904-499e-8b94-37bc9145b04d",
+                    "id": "17f6ff77-b645-4724-927d-7d8a939ff7f6",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3f5a5499-a6c7-4a5a-bc6f-e5d649c73467",
                     "path": "<Touchscreen>/Press",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Phone",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

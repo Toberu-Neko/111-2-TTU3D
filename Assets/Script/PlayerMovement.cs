@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     Vector3 desireDirection;
     [SerializeField] private float moveSpeed;
+    [SerializeField] private float lrSpeed;
     [SerializeField] private LayerMask ground;
     private RaycastHit groundHit;
     private Transform groundDetector;
@@ -31,10 +32,12 @@ public class PlayerMovement : MonoBehaviour
     }
     void Movement()
     {
-        if (Physics.Raycast(groundDetector.position, Vector3.down, out groundHit, .1f, ground))
+        if (Physics.Raycast(groundDetector.position, Vector3.down, out groundHit, 10f, ground))
         {
             desireDirection = Vector3.ProjectOnPlane(Vector3.forward, groundHit.normal);
         }
         transform.Translate(moveSpeed * Time.deltaTime * desireDirection);
+
+        transform.Translate(lrSpeed * AccelerometerManager.instance.GetAcceleration().x * Time.deltaTime * Vector3.right);
     }
 }
