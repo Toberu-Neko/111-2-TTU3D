@@ -1,0 +1,34 @@
+{
+    "name": "TestControl",
+    "maps": [
+        {
+            "name": "Action map",
+            "id": "84258c07-f2ee-4f6f-bdd2-6876d1e0586a",
+            "actions": [
+                {
+                    "name": "Phone",
+                    "type": "Button",
+                    "id": "754b9454-e9fa-4afa-abad-badc55928774",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "211f67eb-f904-499e-8b94-37bc9145b04d",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Phone",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
