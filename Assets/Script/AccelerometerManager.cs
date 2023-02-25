@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class AccelerometerManager : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class AccelerometerManager : MonoBehaviour
 
     private void Update()
     {
-        acceleration = Input.acceleration;
+        acceleration = Accelerometer.current.acceleration.ReadValue();
         /* if (SystemInfo.supportsAccelerometer)
         {
             acceleration = Input.acceleration;
