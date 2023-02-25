@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     private Transform groundDetector;
     private bool isGrounded;
     private bool canJump;
+    private bool canTurn;
 
     #region OLD
     /*
@@ -67,6 +69,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
     private void Start()
     {
+        canTurn = true;
         canJump = true;
         playerRig = GetComponent<Rigidbody>();
         groundDetector = transform.Find("Misc/GroundDetector");
@@ -84,7 +87,25 @@ public class PlayerMovement : MonoBehaviour
     {
         isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, .1f, ground);
 
-        if(playerControls.PhoneControl.Jump.ReadValue<float>() != 0 && canJump)
+        if (playerControls.PhoneControl.Turn.ReadValue<float>() > inputSensitivity
+            || playerControls.PhoneControl.Turn.ReadValue<float>() < -inputSensitivity
+            && canTurn)
+        {
+            if(playerControls.PhoneControl.Turn.ReadValue<float>() > 0)
+            {
+                // transform.localRotation *= new Quaternion(0, 90, 0, 0);
+                Debug.Log("Turn Right.");
+            }
+            else if (playerControls.PhoneControl.Turn.ReadValue<float>() < 0)
+            {
+                // transform.localRotation *= new Quaternion(0, -90, 0, 0);
+                Debug.Log("Turn Left.");
+            }
+            canTurn = false;
+
+            Invoke(nameof(ResetTurn), .3f);
+        }
+        else if(playerControls.PhoneControl.Jump.ReadValue<float>() > inputSensitivity && canJump)
         {
             Jump();
         }
@@ -103,6 +124,10 @@ public class PlayerMovement : MonoBehaviour
         {
             ResetPosition();
         }
+    }
+    void ResetTurn()
+    {
+        canTurn = true;
     }
     void ResetPosition()
     {   

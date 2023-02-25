@@ -37,7 +37,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""TurnLeft"",
+                    ""name"": ""Turn"",
                     ""type"": ""PassThrough"",
                     ""id"": ""41c00537-66c7-46d9-86e3-031f4de3836b"",
                     ""expectedControlType"": """",
@@ -77,7 +77,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""adc2be3d-5f1c-4a91-b08e-810436224327"",
-                    ""path"": ""<Touchscreen>/Press"",
+                    ""path"": ""<Touchscreen>/delta/y"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -88,11 +88,11 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d3c14237-1e77-4486-b6ae-d8e69edf0297"",
-                    ""path"": ""<Touchscreen>/delta/left"",
+                    ""path"": ""<Touchscreen>/delta/x"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""TurnLeft"",
+                    ""action"": ""Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -137,7 +137,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         // PhoneControl
         m_PhoneControl = asset.FindActionMap("PhoneControl", throwIfNotFound: true);
         m_PhoneControl_Jump = m_PhoneControl.FindAction("Jump", throwIfNotFound: true);
-        m_PhoneControl_TurnLeft = m_PhoneControl.FindAction("TurnLeft", throwIfNotFound: true);
+        m_PhoneControl_Turn = m_PhoneControl.FindAction("Turn", throwIfNotFound: true);
         m_PhoneControl_TurnRight = m_PhoneControl.FindAction("TurnRight", throwIfNotFound: true);
         m_PhoneControl_Slide = m_PhoneControl.FindAction("Slide", throwIfNotFound: true);
         m_PhoneControl_Move = m_PhoneControl.FindAction("Move", throwIfNotFound: true);
@@ -201,7 +201,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PhoneControl;
     private IPhoneControlActions m_PhoneControlActionsCallbackInterface;
     private readonly InputAction m_PhoneControl_Jump;
-    private readonly InputAction m_PhoneControl_TurnLeft;
+    private readonly InputAction m_PhoneControl_Turn;
     private readonly InputAction m_PhoneControl_TurnRight;
     private readonly InputAction m_PhoneControl_Slide;
     private readonly InputAction m_PhoneControl_Move;
@@ -210,7 +210,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         private @PlayerControls m_Wrapper;
         public PhoneControlActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Jump => m_Wrapper.m_PhoneControl_Jump;
-        public InputAction @TurnLeft => m_Wrapper.m_PhoneControl_TurnLeft;
+        public InputAction @Turn => m_Wrapper.m_PhoneControl_Turn;
         public InputAction @TurnRight => m_Wrapper.m_PhoneControl_TurnRight;
         public InputAction @Slide => m_Wrapper.m_PhoneControl_Slide;
         public InputAction @Move => m_Wrapper.m_PhoneControl_Move;
@@ -226,9 +226,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnJump;
-                @TurnLeft.started -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurnLeft;
-                @TurnLeft.performed -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurnLeft;
-                @TurnLeft.canceled -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurnLeft;
+                @Turn.started -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurn;
+                @Turn.performed -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurn;
+                @Turn.canceled -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurn;
                 @TurnRight.started -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurnRight;
                 @TurnRight.performed -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurnRight;
                 @TurnRight.canceled -= m_Wrapper.m_PhoneControlActionsCallbackInterface.OnTurnRight;
@@ -245,9 +245,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
-                @TurnLeft.started += instance.OnTurnLeft;
-                @TurnLeft.performed += instance.OnTurnLeft;
-                @TurnLeft.canceled += instance.OnTurnLeft;
+                @Turn.started += instance.OnTurn;
+                @Turn.performed += instance.OnTurn;
+                @Turn.canceled += instance.OnTurn;
                 @TurnRight.started += instance.OnTurnRight;
                 @TurnRight.performed += instance.OnTurnRight;
                 @TurnRight.canceled += instance.OnTurnRight;
@@ -264,7 +264,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     public interface IPhoneControlActions
     {
         void OnJump(InputAction.CallbackContext context);
-        void OnTurnLeft(InputAction.CallbackContext context);
+        void OnTurn(InputAction.CallbackContext context);
         void OnTurnRight(InputAction.CallbackContext context);
         void OnSlide(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);

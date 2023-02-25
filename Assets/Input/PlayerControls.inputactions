@@ -15,7 +15,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "TurnLeft",
+                    "name": "Turn",
                     "type": "PassThrough",
                     "id": "41c00537-66c7-46d9-86e3-031f4de3836b",
                     "expectedControlType": "",
@@ -55,7 +55,7 @@
                 {
                     "name": "",
                     "id": "adc2be3d-5f1c-4a91-b08e-810436224327",
-                    "path": "<Touchscreen>/Press",
+                    "path": "<Touchscreen>/delta/y",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -66,11 +66,11 @@
                 {
                     "name": "",
                     "id": "d3c14237-1e77-4486-b6ae-d8e69edf0297",
-                    "path": "<Touchscreen>/delta/left",
+                    "path": "<Touchscreen>/delta/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "TurnLeft",
+                    "action": "Turn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
