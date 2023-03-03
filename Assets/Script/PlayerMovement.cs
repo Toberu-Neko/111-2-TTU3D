@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,11 +11,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float inputSensitivity;
     private PlayerControls playerControls;
 
-    [Header("Movement")]
+    [Header("Move")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float lrSpeed;
     [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpCooldown;
     private Vector3 desireDirection;
+
+    [Header("Turn")]
+    [SerializeField] private float turnSpeed;
+    [SerializeField] private float turnCooldown;
 
     [Header("LayerMask")]
     [SerializeField] private LayerMask ground;
@@ -27,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private bool canJump;
     private bool canTurn;
+    private int turn;
+    private Quaternion tempRotation;
 
     #region OLD
     /*
@@ -69,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
     private void Start()
     {
+        turn = 0;
         canTurn = true;
         canJump = true;
         playerRig = GetComponent<Rigidbody>();
@@ -87,33 +96,61 @@ public class PlayerMovement : MonoBehaviour
     {
         isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, .1f, ground);
 
-        if (playerControls.PhoneControl.Turn.ReadValue<float>() > inputSensitivity
-            || playerControls.PhoneControl.Turn.ReadValue<float>() < -inputSensitivity
-            && canTurn)
-        {
-            if(playerControls.PhoneControl.Turn.ReadValue<float>() > 0)
-            {
-                // transform.localRotation *= new Quaternion(0, 90, 0, 0);
-                Debug.Log("Turn Right.");
-            }
-            else if (playerControls.PhoneControl.Turn.ReadValue<float>() < 0)
-            {
-                // transform.localRotation *= new Quaternion(0, -90, 0, 0);
-                Debug.Log("Turn Left.");
-            }
-            canTurn = false;
-
-            Invoke(nameof(ResetTurn), .3f);
-        }
-        else if(playerControls.PhoneControl.Jump.ReadValue<float>() > inputSensitivity && canJump)
+        // Jump input
+        if (playerControls.PhoneControl.Jump.ReadValue<float>() > inputSensitivity && canJump)
         {
             Jump();
         }
-        if(playerRig.velocity.y < 0 && isGrounded && !canJump)
+
+        // Turn right input.
+        if (playerControls.PhoneControl.Turn.ReadValue<float>() > inputSensitivity
+            && playerControls.PhoneControl.Jump.ReadValue<float>() < playerControls.PhoneControl.Turn.ReadValue<float>()
+            && canTurn)
         {
-            canJump = true;
+            tempRotation = transform.localRotation * Quaternion.AngleAxis(90, Vector3.up);
+            turn = 1;
+            canTurn = false;
+
+            CancelInvoke(nameof(ResetTurn));
+            Invoke(nameof(ResetTurn), turnCooldown);
         }
-        if(transform.position.y < -10f)
+
+        // Turn left input.
+        if (playerControls.PhoneControl.Turn.ReadValue<float>() < -inputSensitivity
+            && -playerControls.PhoneControl.Jump.ReadValue<float>() > playerControls.PhoneControl.Turn.ReadValue<float>()
+            && canTurn)
+        {
+            tempRotation = transform.localRotation * Quaternion.AngleAxis(-90, Vector3.up);
+            turn = -1;
+            canTurn = false;
+
+            CancelInvoke(nameof(ResetTurn));
+            Invoke(nameof(ResetTurn), turnCooldown);
+        }
+
+        #region TurnSlerp
+        if (turn == 1)
+        {
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, tempRotation, turnSpeed * Time.deltaTime);
+            if(Mathf.Abs(transform.localRotation.eulerAngles.y - tempRotation.eulerAngles.y) < 0.5f)
+            {
+                transform.localRotation = tempRotation;
+                turn = 0;
+            }
+        }
+        if (turn == -1)
+        {
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, tempRotation, turnSpeed * Time.deltaTime);
+            if (Mathf.Abs(transform.localRotation.eulerAngles.y - tempRotation.eulerAngles.y) < 0.5f)
+            {
+                transform.localRotation = tempRotation;
+                turn = 0;
+            }
+        }
+        #endregion
+
+        // Reset when fall.
+        if (transform.position.y < -10f)
         {
             ResetPosition();
         }
@@ -127,6 +164,8 @@ public class PlayerMovement : MonoBehaviour
     }
     void ResetTurn()
     {
+        if (turn != 0)
+            Debug.LogError("轉向冷卻時間太快了！請增加轉向冷卻時間或增加轉向速度。The turn cooldown is too quick! Please increase turn cooldown or increase turn speed.");
         canTurn = true;
     }
     void ResetPosition()
@@ -137,14 +176,32 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         canJump = false;
+        canTurn = false;
         playerRig.velocity = new Vector3(playerRig.velocity.x, jumpForce, playerRig.velocity.z);
+        Invoke(nameof(ResetTurn), .3f);
+        CancelInvoke(nameof(ResetJump));
+        Invoke(nameof(ResetJump), jumpCooldown);
+    }
+    void ResetJump()
+    {
+        if(!isGrounded)
+        {
+            CancelInvoke(nameof(ResetJump));
+            Invoke(nameof(ResetJump), .5f);
+            return;
+        }
+        
+        canJump = true;
     }
     void Movement()
     {
         if (Physics.Raycast(groundDetector.position, Vector3.down, out groundHit, 10f, ground))
         {
             desireDirection = Vector3.ProjectOnPlane(Vector3.forward, groundHit.normal);
+            // if(Mathf.Abs(Vector3.ProjectOnPlane(Vector3.forward, groundHit.normal).y) > 0.05f)
+            // Debug.Log(Vector3.ProjectOnPlane(Vector3.forward, groundHit.normal));
         }
+        
         transform.Translate(moveSpeed * Time.deltaTime * desireDirection);
 
 
