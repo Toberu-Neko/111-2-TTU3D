@@ -107,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
             && playerControls.PhoneControl.Jump.ReadValue<float>() < playerControls.PhoneControl.Turn.ReadValue<float>()
             && canTurn)
         {
-            tempRotation = transform.localRotation * Quaternion.AngleAxis(90, Vector3.up);
+            tempRotation = transform.localRotation * Quaternion.AngleAxis(117, Vector3.up);
             turn = 1;
             canTurn = false;
 
@@ -198,13 +198,22 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(groundDetector.position, Vector3.down, out groundHit, 10f, ground))
         {
             desireDirection = Vector3.ProjectOnPlane(Vector3.forward, groundHit.normal);
-            // if(Mathf.Abs(Vector3.ProjectOnPlane(Vector3.forward, groundHit.normal).y) > 0.05f)
-            // Debug.Log(Vector3.ProjectOnPlane(Vector3.forward, groundHit.normal));
+            
         }
         
         transform.Translate(moveSpeed * Time.deltaTime * desireDirection);
 
+        // Debug.Log(playerControls.PhoneControl.Move.ReadValue<float>());
 
-        transform.Translate(lrSpeed * playerControls.PhoneControl.Move.ReadValue<float>() * Time.deltaTime * Vector3.right);
+        transform.Translate(lrSpeed * Input.acceleration.x * Time.deltaTime * Vector3.right);
+    }
+
+    public float GetGroundRotation()
+    {
+        return groundHit.collider.gameObject.transform.eulerAngles.y;
+    }
+    public Vector2 GetGroundPos()
+    {
+        return new Vector2(groundHit.collider.gameObject.transform.position.x, groundHit.collider.gameObject.transform.position.z);
     }
 }

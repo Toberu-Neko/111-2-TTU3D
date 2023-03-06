@@ -99,6 +99,17 @@
                 {
                     "name": "",
                     "id": "339a9e28-1791-4343-a944-a6aacee18273",
+                    "path": "<LinearAccelerationSensor>/acceleration/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "18b5ec13-2893-45c5-8e1d-d2814f6c334c",
                     "path": "<Accelerometer>/acceleration/x",
                     "interactions": "",
                     "processors": "",

@@ -11,9 +11,9 @@ public class PlayerStatus : MonoBehaviour
         moveable = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
         
     }
+
 }
