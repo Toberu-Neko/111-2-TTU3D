@@ -21,6 +21,10 @@ public class PlayerMovement : MonoBehaviour
     [Header("Turn")]
     [SerializeField] private float turnSpeed;
     [SerializeField] private float turnCooldown;
+    [HideInInspector] public float turnRightAngle;
+    [HideInInspector] public float turnLeftAngle;
+    [HideInInspector] public float turnStraightAngle;
+    [HideInInspector] public bool goIncline;
 
     [Header("LayerMask")]
     [SerializeField] private LayerMask ground;
@@ -32,8 +36,8 @@ public class PlayerMovement : MonoBehaviour
     private Transform groundDetector;
     private bool isGrounded;
     private bool canJump;
-    private bool canTurn;
-    private int turn;
+    public bool canTurn;
+    private bool turnSlerp;
     private Quaternion tempRotation;
 
     #region OLD
@@ -77,7 +81,11 @@ public class PlayerMovement : MonoBehaviour
     #endregion
     private void Start()
     {
-        turn = 0;
+        turnRightAngle = 90;
+        turnLeftAngle = 90;
+        turnStraightAngle = 180;
+        goIncline = false;
+        turnSlerp = false;
         canTurn = true;
         canJump = true;
         playerRig = GetComponent<Rigidbody>();
@@ -107,12 +115,20 @@ public class PlayerMovement : MonoBehaviour
             && playerControls.PhoneControl.Jump.ReadValue<float>() < playerControls.PhoneControl.Turn.ReadValue<float>()
             && canTurn)
         {
-            tempRotation = transform.localRotation * Quaternion.AngleAxis(117, Vector3.up);
-            turn = 1;
-            canTurn = false;
+            if(!PlayerStatus.inIntersection)
+            {
+                Debug.Log("Try to turn when wasn't in intersection.");
+            }
+            else
+            {
+                tempRotation = transform.localRotation * Quaternion.AngleAxis(turnRightAngle, Vector3.up);
+                turnSlerp = true;
+                canTurn = false;
+                PlayerStatus.inIntersection = false;
 
-            CancelInvoke(nameof(ResetTurn));
-            Invoke(nameof(ResetTurn), turnCooldown);
+                CancelInvoke(nameof(ResetTurn));
+                Invoke(nameof(ResetTurn), turnCooldown);
+            }
         }
 
         // Turn left input.
@@ -120,31 +136,40 @@ public class PlayerMovement : MonoBehaviour
             && -playerControls.PhoneControl.Jump.ReadValue<float>() > playerControls.PhoneControl.Turn.ReadValue<float>()
             && canTurn)
         {
-            tempRotation = transform.localRotation * Quaternion.AngleAxis(-90, Vector3.up);
-            turn = -1;
+            if (!PlayerStatus.inIntersection)
+            {
+                Debug.Log("Try to turn when wasn't in intersection.");
+            }
+            else
+            {
+                tempRotation = transform.localRotation * Quaternion.AngleAxis(turnLeftAngle, Vector3.up);
+                turnSlerp = true;
+                canTurn = false;
+                PlayerStatus.inIntersection = false;
+
+                CancelInvoke(nameof(ResetTurn));
+                Invoke(nameof(ResetTurn), turnCooldown);
+            }
+        }
+        if (goIncline)
+        {
+            tempRotation = transform.localRotation * Quaternion.AngleAxis(turnStraightAngle, Vector3.up);
+            turnSlerp = true;
             canTurn = false;
+            goIncline = false;
 
             CancelInvoke(nameof(ResetTurn));
             Invoke(nameof(ResetTurn), turnCooldown);
         }
 
         #region TurnSlerp
-        if (turn == 1)
+        if (turnSlerp)
         {
             transform.localRotation = Quaternion.Lerp(transform.localRotation, tempRotation, turnSpeed * Time.deltaTime);
             if(Mathf.Abs(transform.localRotation.eulerAngles.y - tempRotation.eulerAngles.y) < 0.5f)
             {
                 transform.localRotation = tempRotation;
-                turn = 0;
-            }
-        }
-        if (turn == -1)
-        {
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, tempRotation, turnSpeed * Time.deltaTime);
-            if (Mathf.Abs(transform.localRotation.eulerAngles.y - tempRotation.eulerAngles.y) < 0.5f)
-            {
-                transform.localRotation = tempRotation;
-                turn = 0;
+                turnSlerp = false;
             }
         }
         #endregion
@@ -157,16 +182,21 @@ public class PlayerMovement : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
         {
             ResetPosition();
         }
     }
+
     void ResetTurn()
     {
-        if (turn != 0)
+        if (turnSlerp)
             Debug.LogError("轉向冷卻時間太快了！請增加轉向冷卻時間或增加轉向速度。The turn cooldown is too quick! Please increase turn cooldown or increase turn speed.");
         canTurn = true;
+        turnLeftAngle = 90;
+        turnRightAngle = 90;
+        turnStraightAngle = 180;
+
     }
     void ResetPosition()
     {   

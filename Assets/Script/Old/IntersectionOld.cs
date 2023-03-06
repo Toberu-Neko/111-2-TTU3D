@@ -9,6 +9,9 @@ public class IntersectionOld : MonoBehaviour
     private List<float> groundRotationY = new List<float>();
     private float playerGroundRotationY;
     private Vector2 playerGroundPos;
+
+    public float turnRightAngle;
+    public float turnLeftAngle;
     
     
     void Start()
@@ -26,12 +29,22 @@ public class IntersectionOld : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Vector2 playerDir = new Vector2 (other.gameObject.transform.position.x, other.gameObject.transform.position.z) - new Vector2 (transform.position.x, transform.position.z);
-            
+            Vector2 playerDir = new Vector2(other.gameObject.transform.forward.x, other.gameObject.transform.forward.z);
+            int count = 0;
             foreach (Vector2 pos in groundPosition)
             {
                 Vector2 t_groundDir = pos - new Vector2(transform.position.x, transform.position.z);
                 Debug.Log(pos + " ªº¨¤«× " + Vector2.SignedAngle(playerDir, t_groundDir));
+                if(Vector2.SignedAngle(playerDir, t_groundDir) > 5 && Vector2.SignedAngle(playerDir, t_groundDir) < 175)
+                {
+                    turnLeftAngle = -Vector2.SignedAngle(playerDir, t_groundDir);
+                }
+                else if (Vector2.SignedAngle(playerDir, t_groundDir) < -5 && Vector2.SignedAngle(playerDir, t_groundDir) > -175)
+                {
+                    turnRightAngle = -Vector2.SignedAngle(playerDir, t_groundDir);
+                }
+                Debug.Log("Rotation: " + groundRotationY[count]);
+                count++;
             }
 
 
