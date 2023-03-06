@@ -82,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         turnRightAngle = 90;
-        turnLeftAngle = 90;
+        turnLeftAngle = -90;
         turnStraightAngle = 180;
         goIncline = false;
         turnSlerp = false;
@@ -193,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
         if (turnSlerp)
             Debug.LogError("轉向冷卻時間太快了！請增加轉向冷卻時間或增加轉向速度。The turn cooldown is too quick! Please increase turn cooldown or increase turn speed.");
         canTurn = true;
-        turnLeftAngle = 90;
+        turnLeftAngle = -90;
         turnRightAngle = 90;
         turnStraightAngle = 180;
 

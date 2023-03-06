@@ -20,7 +20,6 @@ public class Intersection : MonoBehaviour
 
         ResetVariables();
 
-        incline = true;
         interSectionsDir = new Vector2[interSections.Length];
 
         for(int i = 0; i < interSections.Length; i++)
@@ -31,9 +30,9 @@ public class Intersection : MonoBehaviour
     private void ResetVariables()
     {
         turnRightAngle = 90;
-        turnLeftAngle = 90;
+        turnLeftAngle = -90;
         turnStraightAngle = 180;
-        incline = true;
+        incline = false;
     }
 
     private void OnTriggerExit(Collider other)
@@ -61,9 +60,9 @@ public class Intersection : MonoBehaviour
             {
                 pathAngle[i] = Vector2.SignedAngle(playerDir, interSectionsDir[i]);
 
-                if(pathAngle[i] > 180 - minAngle || pathAngle[i] < -180 + minAngle)
+                if((pathAngle[i] < 172 && pathAngle[i] > 140) || (pathAngle[i] > -172 && pathAngle[i] < -140))
                 {
-                    incline = false;
+                    incline = true;
                 }
             }
             if (incline)
@@ -73,7 +72,9 @@ public class Intersection : MonoBehaviour
                 else
                     turnStraightAngle = pathAngle.Min();
 
-                Debug.Log("turnStraightAngle = " + turnStraightAngle);
+                playerMovement.turnStraightAngle = 180 - turnStraightAngle;
+
+                // Debug.Log("turnStraightAngle = " + turnStraightAngle);
             }
             for (int i = 0; i < pathAngle.Length; i++)
             {
@@ -83,18 +84,17 @@ public class Intersection : MonoBehaviour
                     if(pathAngle[i] > minAngle && pathAngle[i] < 180- minAngle)
                     {
                         turnRightAngle = pathAngle[i];
-                        Debug.Log("turnRightAngle = " + turnRightAngle);
+                        playerMovement.turnRightAngle = 180 - turnRightAngle;
+                        // Debug.Log("turnRightAngle = " + turnRightAngle);
                     }
                     if(pathAngle[i] < -minAngle && pathAngle[i] > -180 + minAngle)
                     {
                         turnLeftAngle = pathAngle[i];
-                        Debug.Log("turnLeftAngle = " + turnLeftAngle);
+                        playerMovement.turnLeftAngle = 180 - turnLeftAngle;
+                        // Debug.Log("turnLeftAngle = " + turnLeftAngle);
                     }
                 }
             }
-            playerMovement.turnRightAngle = 180-turnRightAngle;
-            playerMovement.turnLeftAngle = 180-turnLeftAngle;
-            playerMovement.turnStraightAngle = 180 - turnStraightAngle;
         }
     }
 }
